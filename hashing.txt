@@ -1,0 +1,94 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class EmployeeDatabase {
+private:
+ struct Employee {
+ string name;
+ int id;
+ Employee* next;
+ };
+ Employee* table[20]; // Hash table array
+ int hashFunction(string name) {
+ int hash = 0;
+ for (char c : name) {
+ hash = (hash + c) % 20; // Simple hash function
+ }
+ return hash;
+ }
+public:
+ EmployeeDatabase() {
+ for (int i = 0; i < 20; i++) {
+ table[i] = nullptr;
+ }
+ }
+ void insertEmployee(string name, int id) {
+ int index = hashFunction(name);
+ Employee* newEmployee = new Employee;
+ newEmployee->name = name;
+ newEmployee->id = id;
+ newEmployee->next = table[index];
+ table[index] = newEmployee;
+ cout << "Employee " << name << " with ID " << id << " added successfully" << endl;
+ }
+ void lookupEmployee(string name) {
+ int index = hashFunction(name);
+ Employee* current = table[index];
+ while (current != nullptr) {
+ if (current->name == name) {
+ cout << "Employee found: Name: " << current->name << ", ID: " << current->id << endl;
+ return;
+ }
+ current = current->next;
+ }
+ cout << "Employee with name " << name << " not found" << endl;
+ }
+ void displayDatabase() {
+ cout << "\nEmployee Database:\n";
+ for (int i = 0; i < 20; i++) {
+ Employee* current = table[i];
+ while (current != nullptr) {
+ cout << "Name: " << current->name << ", ID: " << current->id << endl;
+ current = current->next;
+ }
+ }
+ }
+};
+int main() {
+ EmployeeDatabase db;
+ int choice;
+ string name;
+ int id;
+ while (true) {
+ cout << "\nEmployee Database Menu:\n";
+ cout << "1. Add Employee\n";
+ cout << "2. Lookup Employee by Name\n";
+ cout << "3. Display All Employees\n";
+ cout << "4. Exit\n";
+ cout << "Enter your choice: ";
+ cin >> choice;
+ switch (choice) {
+ case 1:
+ cout << "Enter Employee Name: ";
+ cin >> name;
+ cout << "Enter Employee ID: ";
+ cin >> id;
+ db.insertEmployee(name, id);
+ break;
+ case 2:
+ cout << "Enter Employee Name to lookup: ";
+ cin >> name;
+ db.lookupEmployee(name);
+ break;
+ case 3:
+ db.displayDatabase();
+ break;
+ case 4:
+ cout << "Exiting program...\n";
+ return 0;
+ default:
+ cout << "Invalid choice! Please try again.\n";
+ }
+ }
+ return 0;
+}
